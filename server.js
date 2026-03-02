@@ -14,6 +14,16 @@ keyGenerator: () => "global"
 
 app.use(limiter);
 
+app.use((req, res, next) => {
+  const auth = req.headers.authorization;
+
+  if (!auth || auth !== `Bearer ${process.env.GATEWAY_TOKEN}`) {
+    return res.status(401).json({ error: "Unauthorized" });
+  }
+
+  next();
+});
+
 app.post("/v1/chat/completions", async (req, res) => {
   try {
     const { messages, max_tokens = 1000 } = req.body;
