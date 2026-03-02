@@ -8,31 +8,41 @@ app.set('trust proxy', 1);
 app.use(express.json());
 const limiter = rateLimit({
   windowMs: 60 * 1000,
-  max: 5,
+  max: 30,
 keyGenerator: () => "global"               
 });
 
 app.use(limiter);
 
-app.use((req, res, next) => {
-  const auth = req.headers.authorization;
+let dailyCount = 0;
+let lastReset = Date.now();
 
-  if (!auth || auth !== `Bearer ${process.env.GATEWAY_TOKEN}`) {
-    return res.status(401).json({ error: "Unauthorized" });
+function checkDailyLimit(req, res, next) {
+  const now = Date.now();
+
+  // 超過 24 小時重置
+  if (now - lastReset > 24 * 60 * 60 * 1000) {
+    dailyCount = 0;
+    lastReset = now;
   }
 
-  next();
-});
+  if (dailyCount >= 700) {
+    return res.status(429).json({ error: "Daily limit reached" });
+  }
 
-app.post("/v1/chat/completions", async (req, res) => {
+  dailyCount++;
+  next();
+}
+app.post("/v1/chat/completions", checkDailyLimit, async (req, res) => {
   try {
     const { messages, max_tokens = 1000 } = req.body;
+    const safeMaxTokens = Math.min(max_tokens, 1500);
 
     const response = await axios.post(
       "https://api.anthropic.com/v1/messages",
       {
         model: "claude-sonnet-4-5-20250929",
-        max_tokens,
+        max_tokens: safeMaxTokens,
         messages
       },
       {
