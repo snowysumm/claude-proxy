@@ -7,8 +7,8 @@ const app = express();
 app.set('trust proxy', 1);
 app.use(express.json());
 const limiter = rateLimit({
-  windowMs: 60 * 1000,   // 1 分鐘
-  max: 30                // 每分鐘最多 30 次
+  windowMs: 60 * 1000,
+  max: 5               
 });
 
 app.use(limiter);
