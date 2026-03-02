@@ -1,9 +1,11 @@
+const cors = reuire("cors");
 const express = require("express");
 const axios = require("axios");
 require("dotenv").config();
 const rateLimit = require("express-rate-limit");
 
 const app = express();
+app.use(cors());
 app.set('trust proxy', 1);
 app.use(express.json());
 const limiter = rateLimit({
