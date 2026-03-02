@@ -33,6 +33,30 @@ function checkDailyLimit(req, res, next) {
   dailyCount++;
   next();
 }
+app.get("/v1/models", (req, res) => {
+  res.json({
+    object: "list",
+    data: [
+      {
+        id: "claude-sonnet-4-5",
+        object: "model",
+        owned_by: "anthropic"
+      }
+    ]
+  });
+});
+app.get("/v1/models", (req, res) => {
+  res.json({
+    object: "list",
+    data: [
+      {
+        id: "claude-sonnet-4-5",
+        object: "model",
+        owned_by: "anthropic"
+      }
+    ]
+  });
+});
 app.post("/v1/chat/completions", checkDailyLimit, async (req, res) => {
   try {
     const { messages, max_tokens = 1000 } = req.body;
