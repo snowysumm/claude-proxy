@@ -4,6 +4,7 @@ require("dotenv").config();
 const rateLimit = require("express-rate-limit");
 
 const app = express();
+app.set('trust proxy', 1);
 app.use(express.json());
 const limiter = rateLimit({
   windowMs: 60 * 1000,   // 1 分鐘
