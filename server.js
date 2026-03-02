@@ -96,6 +96,7 @@ app.post("/v1/chat/completions", checkDailyLimit, async (req, res) => {
     });
 
   } catch (err) {
+    console.error("Claude error:", err.response?.data || err.message);
     res.status(500).json({
       error: err.response?.data || err.message
     });
