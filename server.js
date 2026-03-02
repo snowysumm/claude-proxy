@@ -64,6 +64,15 @@ app.get("/v1/models", (req, res) => {
 app.post("/v1/chat/completions", checkDailyLimit, async (req, res) => {
   try {
     const { messages, max_tokens = 1000 } = req.body;
+    let systemPrompt = undefined;
+
+const filteredMessages = messages.filter(m => {
+  if (m.role === "system") {
+    systemPrompt = m.content;
+    return false;
+  }
+  return true;
+});
     const safeMaxTokens = Math.min(max_tokens, 1500);
 
     const response = await axios.post(
@@ -71,7 +80,8 @@ app.post("/v1/chat/completions", checkDailyLimit, async (req, res) => {
       {
         model: "claude-sonnet-4-5",
         max_tokens: safeMaxTokens,
-        messages
+        system: systemPrompt,
+        messages: filteredMessages
       },
       {
         headers: {
