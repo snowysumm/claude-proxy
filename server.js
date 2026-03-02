@@ -1,9 +1,16 @@
 const express = require("express");
 const axios = require("axios");
 require("dotenv").config();
+const rateLimit = require("express-rate-limit");
 
 const app = express();
 app.use(express.json());
+const limiter = rateLimit({
+  windowMs: 60 * 1000,   // 1 分鐘
+  max: 30                // 每分鐘最多 30 次
+});
+
+app.use(limiter);
 
 app.post("/v1/chat/completions", async (req, res) => {
   try {
