@@ -1,5 +1,6 @@
 const cors = require("cors");
 const express = require("express");
+console.log("SERVER VERSION 2");
 const axios = require("axios");
 require("dotenv").config();
 const rateLimit = require("express-rate-limit");
