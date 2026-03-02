@@ -40,7 +40,8 @@ app.get("/v1/models", (req, res) => {
       {
         id: "claude-sonnet-4-5",
         object: "model",
-        owned_by: "anthropic"
+        created:1700000000
+        owned_by: "openai"
       }
     ]
   });
